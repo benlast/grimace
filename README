@@ -1,1 +1,3 @@
-This file was created by PyCharm 2.7.3 for binding GitHub repository
+grimace is a fluent regexp string builder for Python.
+Inspired by Al Williams' article in Dr Dobbs:
+http://www.drdobbs.com/embedded-systems/irregular-expressions/240157655#
