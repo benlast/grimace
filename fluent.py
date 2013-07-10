@@ -165,7 +165,7 @@ class RE(object):
         # and inspecting the end of the accumulated list for postfix-generating
         # elements.
 
-        def stringifier(elements, e):
+        def string_reducer(elements, e):
             # If e is a postfix-generating REElement, then just add it to the end of the elements list
             if isinstance(e, PostfixGeneratingREElement):
                 return elements + [e]
@@ -182,14 +182,14 @@ class RE(object):
             # If the tail of the list is a postfix-generator x, then return the elements list
             # without that generator, then s, then the postfix text from x
             if elements and isinstance(elements[-1], PostfixGeneratingREElement):
-                postfixer = elements[-1]
-                return (elements[:-1] + s + postfixer.postfix_marker())
+                pf = elements[-1]
+                return elements[:-1] + s + pf.postfix_marker()
 
             # Just return elements with s appended
             return elements + [s]
 
         # Reduce to a list of strings or unicodes and return
-        strings = reduce(stringifier, self.elements, [])
+        strings = reduce(string_reducer, self.elements, [])
 
         # Do one last pass in case there is a lingering postfix-generator in the list, which was left
         # because there was an empty string following it.
@@ -305,3 +305,4 @@ class Tests(unittest.TestCase):
 
     def runTest(self):
         self.assertEqual(RE().start().end().as_string(), "^$")
+        self.assertEqual(RE().start().literal("hello").end().as_string(), "^hello$")
