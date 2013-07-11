@@ -7,6 +7,7 @@ from _version import __version__, __version_info__
 
 # TODO - greedy matching control
 # TODO - MULTILINE mode?
+# TODO - How should we best make a repeat apply to a whole literal such as +61 in a phone number
 
 import types
 import re
@@ -356,6 +357,10 @@ class RE(object):
         """Synonym for zero_or_once"""
         return self.zero_or_once()
 
+    def optional(self):
+        """Synonym for zero_or_once"""
+        return self.zero_or_once()
+
     def one_or_more(self):
         """The FOLLOWING element matches when repeated one or more times"""
         return RE(self, Repeater(minimum=1, maximum=-1))
@@ -367,6 +372,10 @@ class RE(object):
     def exactly(self, n):
         """The FOLLOWING element matches when repeated n times"""
         return RE(self, Repeater(minimum=n, maximum=n))
+
+    def one(self):
+        """Synonym for exactly(1)"""
+        return self.exactly(1)
 
     def up_to(self, n):
         """The FOLLOWING element matches when repeated up to n times"""
@@ -510,3 +519,16 @@ class Examples(unittest.TestCase):
                          .up_to(8).alphanumerics().dot().group(name="ext").up_to(3).alphanumerics().end_group()
                          .as_string(),
                          r"\w{0,8}\.(?P<ext>\w{0,3})")
+
+        #Match a US/Canadian phone number
+        north_american_number_re = (RE().start()
+                                    .literal('(').followed_by().exactly(3).digits().then().literal(')')
+                                    .then().one().literal("-").then().exactly(3).digits()
+                                    .then().one().dash().followed_by().exactly(4).digits().then().end()
+                                    .as_string())
+        print north_american_number_re
+        number_re = re.compile(north_american_number_re)
+        match = number_re.match("(123)-456-7890")
+        self.assertIsNotNone(match)
+
+
