@@ -526,7 +526,7 @@ class Examples(unittest.TestCase):
                                     .then().one().literal("-").then().exactly(3).digits()
                                     .then().one().dash().followed_by().exactly(4).digits().then().end()
                                     .as_string())
-        print north_american_number_re
+
         number_re = re.compile(north_american_number_re)
         match = number_re.match("(123)-456-7890")
         self.assertIsNotNone(match)
