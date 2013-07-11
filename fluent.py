@@ -44,7 +44,7 @@ class Repeater(PostfixGeneratingREElement):
         """Return the appropriate postfix repeat marker"""
         if self.minimum == 0:
             if self.maximum < 0:
-                return '.'
+                return '*'
             elif self.maximum == 1:
                 return '?'
         elif self.minimum == 1:
@@ -53,25 +53,24 @@ class Repeater(PostfixGeneratingREElement):
         return "{%d,%d}" % (self.minimum, self.maximum)
 
 
-class StartCapture(REElement):
-    """ A StartGroup puts FOLLOWING RE elements in a capture.
-    The end of the capture is marked by the next EndCapture"""
+class StartGroup(REElement):
+    """ A StartGroup puts FOLLOWING RE elements in a group.
+    The end of the group is marked by the next EndCapture"""
 
-    def __init__(self, capture_name=None):
-        """If capture_name is None, this is a un-named capture"""
-        self.capture_name = capture_name
+    def __init__(self, name=None):
+        """If group_name is None, this is a un-named group"""
+        self.group_name = name
 
     def marker(self):
-        """Return the appropriate prefix marker for the capture"""
-        #TODO - verify the syntax here
-        if self.capture_name:
-            return "(?P<%s>" % self.capture_name
+        """Return the appropriate prefix marker for the group"""
+        if self.group_name:
+            return "(?P<%s>" % self.group_name
         else:
             return "("
 
 
-class EndCapture(REElement):
-    """An EndGroup ends a capture"""
+class EndGroup(REElement):
+    """An EndGroup ends a group"""
 
     def marker(self):
         return ')'
@@ -149,7 +148,7 @@ class RE(object):
         # We know the list is not empty, so check that the end element is not one that
         # requires at least one following element.
         trailing_element = self.elements[-1]
-        if any(isinstance(trailing_element, k) for k in (StartCapture, Not)):
+        if any(isinstance(trailing_element, k) for k in (StartGroup, Not)):
             raise FormatError("The expression cannot end with this element")
 
         # The list processing here is a little complex, because we allow for an REElement
@@ -182,8 +181,7 @@ class RE(object):
             # If the tail of the list is a postfix-generator x, then return the elements list
             # without that generator, then s, then the postfix text from x
             if elements and isinstance(elements[-1], PostfixGeneratingREElement):
-                pf = elements[-1]
-                return elements[:-1] + s + pf.postfix_marker()
+                return elements[:-1] + [s, elements[-1].postfix_marker()]
 
             # Just return elements with s appended
             return elements + [s]
@@ -262,6 +260,13 @@ class RE(object):
             return RE(self.elements[:-1], r'\W')
         return RE(self, r'\w')
 
+    def word_boundary(self):
+        """Adds an word-boundary '\b' specifier to the regexp: may be inverted by a
+        preceding Not"""
+        if self.ends_with_not():
+            return RE(self.elements[:-1], r'\B')
+        return RE(self, r'\b')
+
     def any_of(self, s):
         """Match on any of the characters in the string s.  If the preceding element
         is a Not, invert the sense of the match."""
@@ -275,13 +280,25 @@ class RE(object):
         """The FOLLOWING element matches when repeated zero or more times"""
         return RE(self, Repeater(minimum=0, maximum=-1))
 
+    def any_number_of(self):
+        """Synonym for zero_or_more"""
+        return self.zero_or_more()
+
     def zero_or_once(self):
         """The FOLLOWING element matches when repeated zero or once"""
         return RE(self, Repeater(minimum=0, maximum=1))
 
+    def zero_or_one(self):
+        """Synonym for zero_or_once"""
+        return self.zero_or_once()
+
     def one_or_more(self):
         """The FOLLOWING element matches when repeated one or more times"""
         return RE(self, Repeater(minimum=1, maximum=-1))
+
+    def at_least_one(self):
+        """Synonym for one_or_more"""
+        return self.one_or_more()
 
     def exactly(self, n):
         """The FOLLOWING element matches when repeated n times"""
@@ -289,20 +306,80 @@ class RE(object):
 
     def between(self, n, m):
         """The FOLLOWING element matches when repeated at least n times and at most m times"""
-        return RE(self, Repeater(minimum=n, maximum=m))
+        return RE(self, Repeater(minimum=min(n,m), maximum=max(n, m)))
+
+    # Logical
+
+    def not_a(self):
+        """Add a Not element, that inverts the next applicable
+        element.  Since not is a reserved word in Python, we
+        use not_a."""
+        return RE(self, Not())
+
+    def not_an(self):
+        """Synonym for not()"""
+        return self.not_a()
+
+    # Capturing
+    def group(self, name=None):
+        """Start a named or un-named group"""
+        return RE(self, StartGroup(name=name))
+
+    def start_group(self, name=None):
+        """synonym for group"""
+        return self.group(name=name)
+
+    def end_group(self):
+        return RE(self, EndGroup())
 
     # groupings of RE objects
     def any_re(self, *args):
         """Match on any of the args, which can be RE objects or strings"""
-        return RE(self, '|'.join(unicode(x) for x in args))
+        return RE(self, '|'.join(x.as_string() if isinstance(x, RE) else unicode(x) for x in args))
 
 # Unit tests go below here
 
 import unittest
 
 
-class Tests(unittest.TestCase):
-
+class SimpleTests(unittest.TestCase):
     def runTest(self):
+        self.assertEqual(RE().literal(u"hello").as_string(), u"hello")
         self.assertEqual(RE().start().end().as_string(), "^$")
         self.assertEqual(RE().start().literal("hello").end().as_string(), "^hello$")
+        self.assertEqual(RE()
+            .alphanumeric().word_boundary().digit()
+            .as_string(),
+            r"\w\b\d")
+
+
+class NotTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().digit().not_a().digit().as_string(), r"\d\D")
+        self.assertEqual(RE().word_boundary().not_a().word_boundary().as_string(),
+                         r"\b\B")
+        self.assertEqual(RE().not_an().alphanumeric().digit().alphanumeric().as_string(),
+                             r"\W\d\w")
+
+
+class RepeatTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().zero_or_once().digit().as_string(), "\d?")
+        self.assertEqual(RE().zero_or_one().digit().as_string(), "\d?")
+        self.assertEqual(RE().zero_or_more().digits().as_string(), "\d*")
+        self.assertEqual(RE().any_number_of().digits().as_string(), "\d*")
+        self.assertEqual(RE().at_least_one().digit().as_string(), "\d+")
+        self.assertEqual(RE().between(2, 5).digit().as_string(), "\d{2,5}")
+        self.assertEqual(RE().between(5, 2).digit().as_string(), "\d{2,5}")
+
+
+class CaptureTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().start()
+                         .group().any_number_of().alphanumeric().end_group()
+                         .as_string(),
+                         r"^(\w*)")
+        self.assertEqual(RE().start()
+                         .group(name="abcd").any_number_of().alphanumeric().end_group()
+                         .as_string(),
+                         r"^(?P<abcd>\w*)")
