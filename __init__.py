@@ -7,7 +7,8 @@ from _version import __version__, __version_info__
 
 # TODO - greedy matching control
 # TODO - MULTILINE mode?
-# TODO - How should we best make a repeat apply to a whole literal such as +61 in a phone number
+# TODO - combining REs
+# TODO - canned literals and other non-parameterized methods invoked as properties not methods?
 
 import types
 import re
