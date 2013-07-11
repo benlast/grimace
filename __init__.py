@@ -1,15 +1,12 @@
 """
 grimace - a fluent regular expression package for Python
-Inspired by Al Williams' article in Dr Dobbs:
-http://www.drdobbs.com/embedded-systems/irregular-expressions/240157655#
 """
 
 __author__ = 'ben last <ben@benlast.com>'
+from _version import __version__, __version_info__
 
 # TODO - greedy matching control
-# TODO - MULTILINE mode
-# TODO - as_re to return an re.SRE_Pattern (compiled regex)
-# TODO - match() and search() to directly invoke the re methods?
+# TODO - MULTILINE mode?
 
 import types
 import re
@@ -86,6 +83,7 @@ class Not(REElement):
 
 class FormatError(Exception):
     """The RE is badly formatted"""
+
     def __init__(self, message="The expression is incorrectly formatted"):
         self.message = message
 
@@ -168,7 +166,7 @@ class RE(object):
             raise FormatError("The expression contains different numbers of start_group and end_group elements")
 
         # If there's at least one group, then we will check for end-before-start or start-after-end
-        if len(start_group_indices)>0:
+        if len(start_group_indices) > 0:
             if end_group_indices[0] < start_group_indices[0]:
                 raise FormatError("An end_group comes before the first start_group")
             elif start_group_indices[-1] > end_group_indices[-1]:
@@ -266,7 +264,7 @@ class RE(object):
     def escape(c):
         """Return the character c as-is, unless it is a metacharacter, in
          which case return it preceded by a backslash"""
-        return RE.backslash+c if c in RE.metacharacters else c
+        return RE.backslash + c if c in RE.metacharacters else c
 
     # Basic elements, character classes
 
@@ -440,9 +438,9 @@ class SimpleTests(unittest.TestCase):
         self.assertEqual(RE().start().end().as_string(), "^$")
         self.assertEqual(RE().start().literal("hello").end().as_string(), "^hello$")
         self.assertEqual(RE()
-            .alphanumeric().word_boundary().digit()
-            .as_string(),
-            r"\w\b\d")
+                         .alphanumeric().word_boundary().digit()
+                         .as_string(),
+                         r"\w\b\d")
 
         self.assertEqual(RE().any_of("abcdef").as_string(), r"[abcdef]")
 
@@ -453,13 +451,14 @@ class SimpleTests(unittest.TestCase):
         r = RE().start().end().as_re()
         self.assertTrue(hasattr(r, "match") and hasattr(r, "search"))
 
+
 class NotTests(unittest.TestCase):
     def runTest(self):
         self.assertEqual(RE().digit().not_a().digit().as_string(), r"\d\D")
         self.assertEqual(RE().word_boundary().not_a().word_boundary().as_string(),
                          r"\b\B")
         self.assertEqual(RE().not_an().alphanumeric().digit().alphanumeric().as_string(),
-                             r"\W\d\w")
+                         r"\W\d\w")
 
 
 class RepeatTests(unittest.TestCase):
