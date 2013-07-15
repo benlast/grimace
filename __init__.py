@@ -13,6 +13,14 @@ import types
 import re
 
 
+class CallableUnicode(unicode):
+    """A class that returns the same value when called or accessed as an attribute.
+    This allows an attribute such as dot() or dash(0 to be used without having to add
+    the parentheses"""
+    def __call__(self, *args, **kwargs):
+        return unicode(self)
+
+
 class REElement(object):
     """Parent class for all elements that mark RE behaviour"""
 
