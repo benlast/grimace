@@ -20,6 +20,12 @@ class CallableUnicode(unicode):
     def __call__(self, *args, **kwargs):
         return unicode(self)
 
+# The "opposite" (a 'method' that returns the RE on which it's invoked whether it's called or accessed,
+# can be done by adding a __call__ to RE the returns the RE instance, and having the attribute wrapped in
+# a descriptor that returns the RE instance.  Then R.x gets the value of x, which is R, and calls R, which
+# returns R.  That would allow methods like then() or followed_by() to be used without the parentheses.
+# TODO - use CallableUnicode and this other technique (descriptor style) to sikmplify the syntax.
+
 
 class REElement(object):
     """Parent class for all elements that mark RE behaviour"""
