@@ -5,33 +5,13 @@ grimace - a fluent regular expression package for Python
 __author__ = 'ben last <ben@benlast.com>'
 from _version import __version__, __version_info__
 
-# TODO - greedy matching control
+# TODO - lookahead assertions - suggest .lookahead_match, .lookahead_end, and allow inversion via not_a
 # TODO - MULTILINE mode?
 # TODO - combining REs
+# TODO - final rework to avoid having everything in the __init__ (yes, I know)
 
 import types
 import re
-
-
-class Extender(object):
-    """An Extender is a descriptor intended for use with RE objects, whose __get__ method returns a
-    new RE based on the RE on which it was invoked, but with the elements extended with a given
-    string, set when the Extender is initialized.  It exists so that methods like start() and end()
-    can be invoked as attributes or methods."""
-    def __init__(self, string=None):
-        """Initialize the Extender such that __get__ will return a new RE based on
-        the RE on which the Extender is invoked, with the elements list having the
-        given string appended"""
-        self.string = string
-
-    def __get__(self, instance, owner):
-        if isinstance(instance, RE):
-            if self.string is not None:
-                # Remove the Not()
-                return RE(instance.elements[:-1], self.string)
-            else:
-                return RE(instance)
-        return None
 
 
 class Extender(object):
@@ -76,24 +56,23 @@ class Repeater(PostfixGeneratingREElement):
     following element, but fluency implies that the repeater comes
     first.  E.g. one_or_more().digit()"""
 
-    # TODO - greedy markers
-
-    def __init__(self, minimum=0, maximum=1):
+    def __init__(self, minimum=0, maximum=1, greedy=True):
         """maximum may be negative to mean any number of repeats"""
         self.minimum = minimum
         self.maximum = maximum
+        self.greedy = greedy
 
     def postfix_marker(self):
         """Return the appropriate postfix repeat marker"""
         if self.minimum == 0:
             if self.maximum < 0:
-                return '*'
+                return '*' if self.greedy else '*?'
             elif self.maximum == 1:
-                return '?'
+                return '?' if self.greedy else '??'
         elif self.minimum == 1:
             if self.maximum < 0:
-                return '+'
-        return "{%d,%d}" % (self.minimum, self.maximum)
+                return '+' if self.greedy else '+?'
+        return "{%d,%d}%s" % (self.minimum, self.maximum, "" if self.greedy else '?')
 
 
 class StartGroup(REElement):
@@ -120,7 +99,8 @@ class EndGroup(REElement):
 
 
 class Not(REElement):
-    """ A Not object inverts the matching sense of the FOLLOWING character class"""
+    """ A Not object inverts the matching sense of the FOLLOWING character class, or
+    the greediness of the FOLLOWING repeat marker"""
     pass
 
 
@@ -278,6 +258,8 @@ class RE(object):
 
     def ends_with_not(self):
         """Return True if the current elements list ends with a Not"""
+        # This is technically a private method, but it's not mangle-named so that
+        # the Extender class may use it.
         return self.elements and isinstance(self.elements[-1], Not)
 
     # Result methods
@@ -355,29 +337,33 @@ class RE(object):
         return RE(self, "[%s]" % charset)
 
     # repeat filters
-    any_number_of = zero_or_more = Extender(Repeater(minimum=0, maximum=-1))
+    any_number_of = zero_or_more = Extender(Repeater(minimum=0, maximum=-1),
+                                            Repeater(minimum=0, maximum=-1, greedy=False))
     """The FOLLOWING element matches when repeated zero or more times"""
 
-    an_optional = optional = zero_or_one = zero_or_once = Extender(Repeater(minimum=0, maximum=1))
+    an_optional = optional = zero_or_one = zero_or_once = Extender(Repeater(minimum=0, maximum=1),
+                                                                   Repeater(minimum=0, maximum=1, greedy=False))
     """The FOLLOWING element matches when repeated zero or once"""
 
-
-    at_least_one = one_or_more = Extender(Repeater(minimum=1, maximum=-1))
+    at_least_one = one_or_more = Extender(Repeater(minimum=1, maximum=-1),
+                                          Repeater(minimum=1, maximum=-1, greedy=False))
     """The FOLLOWING element matches when repeated one or more times"""
 
     def exactly(self, n):
-        """The FOLLOWING element matches when repeated n times"""
+        """The FOLLOWING element matches when repeated n times - greediness is not relevant for this repeat match"""
         return RE(self, Repeater(minimum=n, maximum=n))
 
     a = an = one = Extender(Repeater(minimum=1, maximum=1))
     """Synonym for exactly(1)"""
 
     def up_to(self, n):
-        """The FOLLOWING element matches when repeated up to n times"""
+        """The FOLLOWING element matches when repeated up to n times.
+        greediness is not relevant for this repeat match"""
         return RE(self, Repeater(minimum=0, maximum=n))
 
     def between(self, n, m):
-        """The FOLLOWING element matches when repeated at least n times and at most m times"""
+        """The FOLLOWING element matches when repeated at least n times and at most m times.
+         greediness is not relevant for this repeat match"""
         return RE(self, Repeater(minimum=min(n, m), maximum=max(n, m)))
 
     # Convenience methods
@@ -391,7 +377,7 @@ class RE(object):
 
     # Logical
 
-    not_an = not_a = Extender(Not())
+    not_an = not_a = non_greedy = Extender(Not())
     """Add a Not element, that inverts the next applicable
     element.  Since not is a reserved word in Python, we
     call this method not_a."""
@@ -465,12 +451,17 @@ class NotTests(unittest.TestCase):
 class RepeatTests(unittest.TestCase):
     def runTest(self):
         self.assertEqual(RE().zero_or_once().digit().as_string(), "\d?")
+        self.assertEqual(RE().non_greedy.zero_or_one.digit.as_string(), "\d??")
         self.assertEqual(RE().zero_or_one.digit.as_string(), "\d?")
         self.assertEqual(RE().zero_or_more().digits().as_string(), "\d*")
+        self.assertEqual(RE().non_greedy.zero_or_more.digits.as_string(), "\d*?")
         self.assertEqual(RE().any_number_of.digits.as_string(), "\d*")
         self.assertEqual(RE().one.digit.as_string(), "\d{1,1}")
+        self.assertEqual(RE().non_greedy.one.digit.as_string(), "\d{1,1}")  # not affected by greediness
         self.assertEqual(RE().at_least_one().digit().as_string(), "\d+")
+        self.assertEqual(RE().non_greedy.at_least_one.digit.as_string(), "\d+?")
         self.assertEqual(RE().between(2, 5).digit().as_string(), "\d{2,5}")
+        self.assertEqual(RE().non_greedy.between(25, 20).digit().as_string(), "\d{20,25}")
         self.assertEqual(RE().between(5, 2).digit().as_string(), "\d{2,5}")
 
 
