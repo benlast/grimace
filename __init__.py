@@ -1,5 +1,7 @@
 """
-grimace - a fluent regular expression package for Python
+grimace - a fluent regular expression package for Python.
+(c) 2013 ben last <ben@benlast.com>
+See the LICENSE file for licence terms (MIT, AFL)
 """
 
 __author__ = 'ben last <ben@benlast.com>'
