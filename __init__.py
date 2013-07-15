@@ -8,24 +8,51 @@ from _version import __version__, __version_info__
 # TODO - greedy matching control
 # TODO - MULTILINE mode?
 # TODO - combining REs
-# TODO - canned literals and other non-parameterized methods invoked as properties not methods?
 
 import types
 import re
 
 
-class CallableUnicode(unicode):
-    """A class that returns the same value when called or accessed as an attribute.
-    This allows an attribute such as dot() or dash(0 to be used without having to add
-    the parentheses"""
-    def __call__(self, *args, **kwargs):
-        return unicode(self)
+class Extender(object):
+    """An Extender is a descriptor intended for use with RE objects, whose __get__ method returns a
+    new RE based on the RE on which it was invoked, but with the elements extended with a given
+    string, set when the Extender is initialized.  It exists so that methods like start() and end()
+    can be invoked as attributes or methods."""
+    def __init__(self, string=None):
+        """Initialize the Extender such that __get__ will return a new RE based on
+        the RE on which the Extender is invoked, with the elements list having the
+        given string appended"""
+        self.string = string
 
-# The "opposite" (a 'method' that returns the RE on which it's invoked whether it's called or accessed,
-# can be done by adding a __call__ to RE the returns the RE instance, and having the attribute wrapped in
-# a descriptor that returns the RE instance.  Then R.x gets the value of x, which is R, and calls R, which
-# returns R.  That would allow methods like then() or followed_by() to be used without the parentheses.
-# TODO - use CallableUnicode and this other technique (descriptor style) to sikmplify the syntax.
+    def __get__(self, instance, owner):
+        if isinstance(instance, RE):
+            if self.string is not None:
+                # Remove the Not()
+                return RE(instance.elements[:-1], self.string)
+            else:
+                return RE(instance)
+        return None
+
+
+class Extender(object):
+    """An Extender is a descriptor intended for use with RE objects, whose __get__ method returns a
+    new RE based on the RE on which it was invoked, but with the elements extended with a given
+    element, set when the Extender is initialized.  It exists so that methods like start() and end()
+    can be invoked as attributes or methods.
+    For extenders that need to add an alternate element if the existing RE ends with a Not, an alternate
+    may be passed to init; this is the element added if a Not is present."""
+    def __init__(self, element=None, alternate=None):
+        self.element = element
+        self.alternate = alternate if alternate is not None else self.element
+
+    def __get__(self, instance, owner):
+        if isinstance(instance, RE):
+            element = self.alternate if instance.ends_with_not() else self.element
+            if element is not None:
+                return RE(instance, element)
+            else:
+                return RE(instance)
+        return None
 
 
 class REElement(object):
@@ -126,6 +153,16 @@ class RE(object):
         """
         if args:
             self.elements = reduce(RE.__reducer, args, [])
+
+        # Add no-op attributes that may be invoked as attributes or methods
+        self.then = self
+        self.followed_by = self
+
+    def __call__(self, *args, **kwargs):
+        """Calling an RE object returns a reference to that same object.  This
+        is done to support no-ops like then() and followed_by() such that
+        they can be invoked as attributes or methods"""
+        return self
 
     @staticmethod
     def __is_legal_element(e):
@@ -239,7 +276,7 @@ class RE(object):
         may be an EncodingError raised."""
         return "".join((x if isinstance(x, str) else x.encode('ascii') for x in self.__stringify()))
 
-    def __ends_with_not(self):
+    def ends_with_not(self):
         """Return True if the current elements list ends with a Not"""
         return self.elements and isinstance(self.elements[-1], Not)
 
@@ -264,13 +301,8 @@ class RE(object):
 
     # The remaining methods are fluent
 
-    def start(self):
-        """Add the start anchor ^ to the regexp"""
-        return RE(self, '^')
-
-    def end(self):
-        """Add the end anchor '$' to the regexp"""
-        return RE(self, '$')
+    start = Extender('^')
+    end = Extender('$')
 
     # Character classes
     backslash = "\\"
@@ -289,108 +321,56 @@ class RE(object):
         escaped = ''.join(map(RE.escape, s))
         return RE(self, escaped)
 
-    def digit(self):
-        """Adds a digit '\d' specifier to the regexp, but invert to
-        '\D' if the preceding element is a Not"""
-        if self.__ends_with_not():
-            return RE(self.elements[:-1], r'\D')
-        return RE(self, r'\d')
+    digits = digit = Extender(r'\d', r'\D')
+    """Adds a digit '\d' specifier to the regexp, but invert to '\D' if the preceding element is a Not"""
 
-    def digits(self):
-        """A synonym for digit"""
-        return self.digit()
+    whitespace = Extender(r'\s', r'\S')
+    """Adds a whitespace '\s' specifier to the regexp, but invert to
+    '\S' if the preceding element is a Not"""
 
-    def whitespace(self):
-        """Adds a whitespace '\s' specifier to the regexp, but invert to
-        '\S' if the preceding element is a Not"""
-        if self.__ends_with_not():
-            return RE(self.elements[:-1], r'\S')
-        return RE(self, r'\s')
+    alphanumerics = alphanumeric = Extender(r'\w', r'\W')
+    """Adds an alphanumeric '\w' specifier to the regexp - this matches
+    any of a-z, A-Z or 0-9.  If the preceding element is a Not, invert
+    the match to a '\W'"""
 
-    def alphanumeric(self):
-        """Adds an alphanumeric '\w' specifier to the regexp - this matches
-        any of a-z, A-Z or 0-9.  If the preceding element is a Not, invert
-        the match to a '\W'"""
-        if self.__ends_with_not():
-            return RE(self.elements[:-1], r'\W')
-        return RE(self, r'\w')
+    alpha = a_to_z = Extender(r'[a-zA-Z]', r'[^a-zA-Z]')
+    """Adds an alpha specifier to the regexp - this matches
+    any of a-z, A-Z.  If the preceding element is a Not, invert
+    the match"""
 
-    def alphanumerics(self):
-        """Synonym for alphanumeric()"""
-        return self.alphanumeric()
+    identifier = Extender(r'[a-zA-Z_][\w_]*')
+    """Match an identifier - this is an alpha or underscore
+    followed by zero or more alphanumerics or underscores"""
 
-    def a_to_z(self):
-        """Adds an alpha specifier to the regexp - this matches
-        any of a-z, A-Z.  If the preceding element is a Not, invert
-        the match"""
-        if self.__ends_with_not():
-            return RE(self.elements[:-1], r'[^a-zA-Z]')
-        return RE(self.elements[:-1], r'[a-zA-Z]')
-
-    def alpha(self):
-        """Synonym for a_to_z()"""
-        return self.a_to_z()
-
-    def identifier(self):
-        """Match an identifier - this is an alpha or underscore
-        followed by zero or more alphanumerics or underscores"""
-        return RE(self.elements[:-1], r'[a-zA-Z_][\w_]*')
-
-    def alphanumerics(self):
-        """Synonym for alphanumeric()"""
-        return self.alphanumeric()
-
-    def word_boundary(self):
-        """Adds an word-boundary '\b' specifier to the regexp: may be inverted by a
-        preceding Not"""
-        if self.__ends_with_not():
-            return RE(self.elements[:-1], r'\B')
-        return RE(self, r'\b')
+    word_boundary = Extender(r'\b', r'\B')
+    """Adds an word-boundary '\b' specifier to the regexp: may be inverted by a
+    preceding Not"""
 
     def any_of(self, s):
         """Match on any of the characters in the string s.  If the preceding element
         is a Not, invert the sense of the match."""
         charset = ''.join(map(RE.escape, s))
-        if self.__ends_with_not():
+        if self.ends_with_not():
             return RE(self.elements[:-1], "[^%s]" % charset)
         return RE(self, "[%s]" % charset)
 
     # repeat filters
-    def zero_or_more(self):
-        """The FOLLOWING element matches when repeated zero or more times"""
-        return RE(self, Repeater(minimum=0, maximum=-1))
+    any_number_of = zero_or_more = Extender(Repeater(minimum=0, maximum=-1))
+    """The FOLLOWING element matches when repeated zero or more times"""
 
-    def any_number_of(self):
-        """Synonym for zero_or_more"""
-        return self.zero_or_more()
+    an_optional = optional = zero_or_one = zero_or_once = Extender(Repeater(minimum=0, maximum=1))
+    """The FOLLOWING element matches when repeated zero or once"""
 
-    def zero_or_once(self):
-        """The FOLLOWING element matches when repeated zero or once"""
-        return RE(self, Repeater(minimum=0, maximum=1))
 
-    def zero_or_one(self):
-        """Synonym for zero_or_once"""
-        return self.zero_or_once()
-
-    def optional(self):
-        """Synonym for zero_or_once"""
-        return self.zero_or_once()
-
-    def one_or_more(self):
-        """The FOLLOWING element matches when repeated one or more times"""
-        return RE(self, Repeater(minimum=1, maximum=-1))
-
-    def at_least_one(self):
-        """Synonym for one_or_more"""
-        return self.one_or_more()
+    at_least_one = one_or_more = Extender(Repeater(minimum=1, maximum=-1))
+    """The FOLLOWING element matches when repeated one or more times"""
 
     def exactly(self, n):
         """The FOLLOWING element matches when repeated n times"""
         return RE(self, Repeater(minimum=n, maximum=n))
 
-    def one(self):
-        """Synonym for exactly(1)"""
-        return self.exactly(1)
+    a = an = one = Extender(Repeater(minimum=1, maximum=1))
+    """Synonym for exactly(1)"""
 
     def up_to(self, n):
         """The FOLLOWING element matches when repeated up to n times"""
@@ -402,49 +382,34 @@ class RE(object):
 
     # Convenience methods
 
-    def dot(self):
-        """Add a literal '.', escaped"""
-        return RE(self, r'\.')
-
-    def underscore(self):
-        """Add a literal '_'"""
-        return RE(self, '_')
-
-    def dash(self):
-        """Add a literal '-' - always escaped"""
-        return RE(self, r'\-')
-
-    def followed_by(self):
-        """A no-op - may be included purely to make the fluent expression more readable"""
-        return self
-
-    def then(self):
-        """A no-op - may be included purely to make the fluent expression more readable"""
-        return self
+    dot = Extender(r'\.')
+    """Add a literal '\.'"""
+    underscore = Extender('_')
+    """Add a literal underscore"""
+    dash = Extender(r'\-')
+    """Add a literal dash"""
 
     # Logical
 
-    def not_a(self):
-        """Add a Not element, that inverts the next applicable
-        element.  Since not is a reserved word in Python, we
-        use not_a."""
-        return RE(self, Not())
-
-    def not_an(self):
-        """Synonym for not()"""
-        return self.not_a()
+    not_an = not_a = Extender(Not())
+    """Add a Not element, that inverts the next applicable
+    element.  Since not is a reserved word in Python, we
+    call this method not_a."""
 
     # Capturing
-    def group(self, name=None):
+    start_group = group = Extender(StartGroup())
+    """Start a named or un-named group"""
+
+    def named_group(self, name=None):
         """Start a named or un-named group"""
         return RE(self, StartGroup(name=name))
 
-    def start_group(self, name=None):
+    def start_named_group(self, name=None):
         """synonym for group"""
         return self.group(name=name)
 
-    def end_group(self):
-        return RE(self, EndGroup())
+    end_group = Extender(EndGroup())
+    """End a capture group"""
 
     # groupings of RE objects
     def any_re(self, *args):
@@ -456,11 +421,18 @@ class RE(object):
 import unittest
 
 
+class BaseTests(unittest.TestCase):
+    def runTest(self):
+        # Verify that the result of calling an RE is a reference to that RE
+        r = RE()
+        self.assertEqual(r, r())
+
+
 class SimpleTests(unittest.TestCase):
     def runTest(self):
         self.assertEqual(RE().literal(u"hello").as_string(), u"hello")
-        self.assertEqual(RE().start().end().as_string(), "^$")
-        self.assertEqual(RE().start().literal("hello").end().as_string(), "^hello$")
+        self.assertEqual(RE().start.end().as_string(), "^$")
+        self.assertEqual(RE().start().literal("hello").end.as_string(), "^hello$")
         self.assertEqual(RE()
                          .alphanumeric().word_boundary().digit()
                          .as_string(),
@@ -472,25 +444,31 @@ class SimpleTests(unittest.TestCase):
         self.assertEqual(RE().any_of(RE.metacharacters).as_string(),
                          "[%s]" % (RE.backslash + RE.backslash.join(RE.metacharacters)))
 
-        r = RE().start().end().as_re()
+        r = RE().start.end.as_re()
         self.assertTrue(hasattr(r, "match") and hasattr(r, "search"))
+
+        self.assertEqual(RE().dot.as_string(), r"\.")
+        r1 = RE().dot
+        r2 = RE().dot
+        self.assertNotEqual(r1, r2)
 
 
 class NotTests(unittest.TestCase):
     def runTest(self):
-        self.assertEqual(RE().digit().not_a().digit().as_string(), r"\d\D")
-        self.assertEqual(RE().word_boundary().not_a().word_boundary().as_string(),
+        self.assertEqual(RE().digit.not_a.digit.as_string(), r"\d\D")
+        self.assertEqual(RE().word_boundary.not_a.word_boundary.as_string(),
                          r"\b\B")
-        self.assertEqual(RE().not_an().alphanumeric().digit().alphanumeric().as_string(),
+        self.assertEqual(RE().not_an.alphanumeric.then.digit.followed_by.alphanumeric.as_string(),
                          r"\W\d\w")
 
 
 class RepeatTests(unittest.TestCase):
     def runTest(self):
         self.assertEqual(RE().zero_or_once().digit().as_string(), "\d?")
-        self.assertEqual(RE().zero_or_one().digit().as_string(), "\d?")
+        self.assertEqual(RE().zero_or_one.digit.as_string(), "\d?")
         self.assertEqual(RE().zero_or_more().digits().as_string(), "\d*")
-        self.assertEqual(RE().any_number_of().digits().as_string(), "\d*")
+        self.assertEqual(RE().any_number_of.digits.as_string(), "\d*")
+        self.assertEqual(RE().one.digit.as_string(), "\d{1,1}")
         self.assertEqual(RE().at_least_one().digit().as_string(), "\d+")
         self.assertEqual(RE().between(2, 5).digit().as_string(), "\d{2,5}")
         self.assertEqual(RE().between(5, 2).digit().as_string(), "\d{2,5}")
@@ -503,11 +481,11 @@ class GroupTests(unittest.TestCase):
                          .as_string(),
                          r"^(\w*)")
         self.assertEqual(RE()
-                         .group().start_group().zero_or_more().alphanumeric().end_group().end_group()
+                         .group.start_group().zero_or_more.alphanumerics.end_group.end_group()
                          .as_string(),
                          r"((\w*))")
         self.assertEqual(RE().start()
-                         .group(name="abcd").any_number_of().alphanumeric().end_group()
+                         .named_group(name="abcd").any_number_of().alphanumeric().end_group()
                          .as_string(),
                          r"^(?P<abcd>\w*)")
 
@@ -526,20 +504,30 @@ class Examples(unittest.TestCase):
                          r"\d*\.\d+")
 
         self.assertEqual(RE()
-                         .any_number_of().digits().followed_by().dot().then().at_least_one().digit()
+                         .any_number_of.digits.followed_by.dot.then.at_least_one.digit()
                          .as_string(),
                          r"\d*\.\d+")
 
         self.assertEqual(RE()
-                         .up_to(8).alphanumerics().dot().group(name="ext").up_to(3).alphanumerics().end_group()
+                         .any_number_of.digits.followed_by.a.dot.then.at_least_one.digit()
+                         .as_string(),
+                         r"\d*\.{1,1}\d+")
+
+        self.assertEqual(RE()
+                         .any_number_of.digits.followed_by.an_optional.dot.then.at_least_one.digit
+                         .as_string(),
+                         r"\d*\.?\d+")
+
+        self.assertEqual(RE()
+                         .up_to(8).alphanumerics().dot().named_group(name="ext").up_to(3).alphanumerics().end_group()
                          .as_string(),
                          r"\w{0,8}\.(?P<ext>\w{0,3})")
 
         #Match a US/Canadian phone number
-        north_american_number_re = (RE().start()
-                                    .literal('(').followed_by().exactly(3).digits().then().literal(')')
-                                    .then().one().literal("-").then().exactly(3).digits()
-                                    .then().one().dash().followed_by().exactly(4).digits().then().end()
+        north_american_number_re = (RE().start
+                                    .literal('(').followed_by.exactly(3).digits().then.literal(')')
+                                    .then.one().literal("-").then.exactly(3).digits()
+                                    .then.one().dash().followed_by.exactly(4).digits().then.end
                                     .as_string())
 
         number_re = re.compile(north_american_number_re)
