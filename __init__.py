@@ -14,6 +14,20 @@ import types
 import re
 
 
+class CallableUnicode(unicode):
+    """A class that returns the same value when called or accessed as an attribute.
+    This allows an attribute such as dot() or dash(0 to be used without having to add
+    the parentheses"""
+    def __call__(self, *args, **kwargs):
+        return unicode(self)
+
+# The "opposite" (a 'method' that returns the RE on which it's invoked whether it's called or accessed,
+# can be done by adding a __call__ to RE the returns the RE instance, and having the attribute wrapped in
+# a descriptor that returns the RE instance.  Then R.x gets the value of x, which is R, and calls R, which
+# returns R.  That would allow methods like then() or followed_by() to be used without the parentheses.
+# TODO - use CallableUnicode and this other technique (descriptor style) to sikmplify the syntax.
+
+
 class REElement(object):
     """Parent class for all elements that mark RE behaviour"""
 
