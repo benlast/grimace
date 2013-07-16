@@ -368,6 +368,12 @@ class RE(object):
     any_character = Extender(r'.')
     """Add a . that will match any character"""
 
+    newline = Extender(r'\\n')
+    """Add a \n that will match a newline"""
+
+    tab = Extender(r'\\t')
+    """Add a \r that will match a tab"""
+
     # Logical
 
     not_an = not_a = non_greedy = Extender(Not())

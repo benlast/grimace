@@ -52,6 +52,14 @@ class SimpleTests(unittest.TestCase):
         self.assertEqual(str(RE().anything), r'.*')
         self.assertEqual(str(RE().non_greedy.anything), r'.*?')
 
+        nlr = RE().newline
+        self.assertEqual(str(nlr), r'\\n')
+        self.assertIsNotNone(nlr.as_re().match(r"\n"))
+
+        tlr = RE().tab
+        self.assertEqual(str(tlr), r'\\t')
+        self.assertIsNotNone(tlr.as_re().match(r"\t"))
+
 
 class NotTests(unittest.TestCase):
     def runTest(self):
