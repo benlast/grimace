@@ -362,8 +362,8 @@ class RE(object):
     dash = Extender(r'\-')
     """Add a literal dash"""
 
-    anything = Extender(r'.*')
-    """Add a .* that will match anything"""
+    anything = Extender(r'.*', r'.*?')
+    """Add a .* that will match anything (greedy or non-greedy)"""
 
     any_character = Extender(r'.')
     """Add a . that will match any character"""

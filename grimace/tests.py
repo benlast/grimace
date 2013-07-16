@@ -49,6 +49,9 @@ class SimpleTests(unittest.TestCase):
                          .as_string(),
                          r"[a-zA-Z_]+[a-zA-Z0-9_]*")
 
+        self.assertEqual(str(RE().anything), r'.*')
+        self.assertEqual(str(RE().non_greedy.anything), r'.*?')
+
 
 class NotTests(unittest.TestCase):
     def runTest(self):
