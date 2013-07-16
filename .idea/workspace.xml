@@ -2,18 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dac5f622-863c-45d9-9d5e-8730078ab4fb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grimace/__init__.py" afterPath="$PROJECT_DIR$/grimace/__init__.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="grimace.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373947674536" ignored="false" />
+    <file path="/Dummy.txt" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373948255633" ignored="false" />
     <file path="/fluent.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373499592091" ignored="false" />
     <file path="/Python Console" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373946168248" ignored="false" />
     <file path="/tests.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373947445776" ignored="false" />
     <file path="/__init__.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373948235120" ignored="false" />
     <file path="/LICENCE" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373932470661" ignored="false" />
-    <file path="/setup.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373941404809" ignored="false" />
+    <file path="/setup.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373948343417" ignored="false" />
     <file path="/extender.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373940397684" ignored="false" />
     <file path="/elements.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373944307795" ignored="false" />
     <file path="/_version.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373945372952" ignored="false" />
@@ -36,10 +36,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="__init__.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="__init__.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grimace/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="432" selection-end="432" vertical-scroll-proportion="0.56">
+            <state line="14" column="0" selection-start="432" selection-end="432" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#349#386#0" expanded="true" />
               </folding>
@@ -65,13 +65,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="setup.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="setup.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#42#69#0" expanded="true" />
-              </folding>
+            <state line="2" column="32" selection-start="74" selection-end="74" vertical-scroll-proportion="0.08">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -123,11 +121,11 @@
         <option value="$PROJECT_DIR$/extender.py" />
         <option value="$PROJECT_DIR$/elements.py" />
         <option value="$PROJECT_DIR$/__init__.py" />
-        <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/_version.py" />
         <option value="$PROJECT_DIR$/grimace/elements.py" />
         <option value="$PROJECT_DIR$/grimace/tests.py" />
         <option value="$PROJECT_DIR$/grimace/__init__.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
       </list>
     </option>
   </component>
@@ -423,7 +421,11 @@
       <created>1373947678375</created>
       <updated>1373947678375</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Modified __init__ imports to hide internal classes">
+      <created>1373948258499</created>
+      <updated>1373948258499</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -493,7 +495,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Extended syntax, added more tests, matches wiki documentation&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Modified __init__ imports to hide internal classes" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -516,6 +518,7 @@
     <MESSAGE value="Extended syntax using of() and args to a call on an RE instance, also provided regex() to allow inclusion of character sets." />
     <MESSAGE value="Updated version" />
     <MESSAGE value="Extended syntax, added more tests, matches wiki documentation&#10;" />
+    <MESSAGE value="Modified __init__ imports to hide internal classes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -549,9 +552,7 @@
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="18" selection-start="293" selection-end="293" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -610,15 +611,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#42#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/_version.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="15" column="14" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
@@ -644,10 +636,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/grimace/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="432" selection-end="432" vertical-scroll-proportion="0.56">
+        <state line="14" column="0" selection-start="432" selection-end="432" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#349#386#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="32" selection-start="74" selection-end="74" vertical-scroll-proportion="0.08">
+          <folding />
         </state>
       </provider>
     </entry>

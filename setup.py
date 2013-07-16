@@ -1,6 +1,6 @@
 __author__ = 'benlast <ben@benlast.com>'
 
-from distutils import setup
+from distutils.core import setup
 from _version import __version__
 
 setup(name='grimace',
