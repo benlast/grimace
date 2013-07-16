@@ -104,14 +104,20 @@ class RE(object):
         if args:
             self.elements = reduce(RE.__reducer, args, [])
 
-        # Add no-op attributes that may be invoked as attributes or methods
+        # Add no-op and other attributes that may be invoked as attributes or methods
         self.then = self
         self.followed_by = self
+        self.of = self.of_a = self.of_an = self
 
     def __call__(self, *args, **kwargs):
         """Calling an RE object returns a reference to that same object.  This
         is done to support no-ops like then() and followed_by() such that
-        they can be invoked as attributes or methods"""
+        they can be invoked as attributes or methods.
+        If args are passed, then call returns a new RE that has the given args
+        appended.  This allows 'of' to work as a conjunction or a way to
+        add previously generated REs"""
+        if args:
+            return RE(self, *args)
         return self
 
     @staticmethod
@@ -273,6 +279,11 @@ class RE(object):
         escaped = ''.join(map(RE.escape, s))
         return RE(self, escaped)
 
+    def regex(self, s):
+        """Add the given string to the regex without any escaping, so that legal regex character
+        groupings may be used."""
+        return RE(self, s)
+
     digits = digit = Extender(r'\d', r'\D')
     """Adds a digit '\d' specifier to the regexp, but invert to '\D' if the preceding element is a Not"""
 
@@ -285,7 +296,7 @@ class RE(object):
     any of a-z, A-Z or 0-9.  If the preceding element is a Not, invert
     the match to a '\W'"""
 
-    alpha = a_to_z = Extender(r'[a-zA-Z]', r'[^a-zA-Z]')
+    alpha = alphas = a_to_z = Extender(r'[a-zA-Z]', r'[^a-zA-Z]')
     """Adds an alpha specifier to the regexp - this matches
     any of a-z, A-Z.  If the preceding element is a Not, invert
     the match"""
@@ -299,8 +310,10 @@ class RE(object):
     preceding Not"""
 
     def any_of(self, s):
-        """Match on any of the characters in the string s.  If the preceding element
-        is a Not, invert the sense of the match."""
+        """Match on any of the characters in the string s, treated as LITERALS,
+        and escaped.  If you want to put an actual RE expression such as [a-z] in,
+        use regex().
+        If the preceding element is a Not, invert the sense of the match."""
         charset = ''.join(map(RE.escape, s))
         if self.ends_with_not():
             return RE(self.elements[:-1], "[^%s]" % charset)
@@ -308,11 +321,13 @@ class RE(object):
 
     # repeat filters
     any_number_of = zero_or_more = Extender(Repeater(minimum=0, maximum=-1),
-                                            Repeater(minimum=0, maximum=-1, greedy=False))
+                                            Repeater(minimum=0, maximum=-1,
+                                                     greedy=False))
     """The FOLLOWING element matches when repeated zero or more times"""
 
     an_optional = optional = zero_or_one = zero_or_once = Extender(Repeater(minimum=0, maximum=1),
-                                                                   Repeater(minimum=0, maximum=1, greedy=False))
+                                                                   Repeater(minimum=0, maximum=1,
+                                                                            greedy=False))
     """The FOLLOWING element matches when repeated zero or once"""
 
     at_least_one = one_or_more = Extender(Repeater(minimum=1, maximum=-1),
@@ -340,10 +355,18 @@ class RE(object):
 
     dot = Extender(r'\.')
     """Add a literal '\.'"""
+
     underscore = Extender('_')
     """Add a literal underscore"""
+
     dash = Extender(r'\-')
     """Add a literal dash"""
+
+    anything = Extender(r'.*')
+    """Add a .* that will match anything"""
+
+    any_character = Extender(r'.')
+    """Add a . that will match any character"""
 
     # Logical
 

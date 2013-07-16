@@ -4,6 +4,7 @@ import unittest
 from grimace import RE, FormatError
 import re
 
+
 class BaseTests(unittest.TestCase):
     def runTest(self):
         # Verify that the result of calling an RE is a reference to that RE
@@ -15,11 +16,16 @@ class SimpleTests(unittest.TestCase):
     def runTest(self):
         self.assertEqual(RE().literal(u"hello").as_string(), u"hello")
         self.assertEqual(RE().start.end().as_string(), "^$")
+        self.assertEqual(str(RE().start.end()), "^$")
+        self.assertEqual(unicode(RE().start.end()), u"^$")
         self.assertEqual(RE().start().literal("hello").end.as_string(), "^hello$")
         self.assertEqual(RE()
                          .alphanumeric().word_boundary().digit()
                          .as_string(),
                          r"\w\b\d")
+
+        self.assertEqual(RE().start.zero_or_more.of.any_character.end.as_string(),
+                         r'^.*$')
 
         self.assertEqual(RE().any_of("abcdef").as_string(), r"[abcdef]")
 
@@ -34,6 +40,14 @@ class SimpleTests(unittest.TestCase):
         r1 = RE().dot
         r2 = RE().dot
         self.assertNotEqual(r1, r2)
+
+        identifier_start_chars = RE().regex("[a-zA-Z_]")
+        identifier_chars = RE().regex("[a-zA-Z0-9_]")
+
+        self.assertEqual(RE().one_or_more.of(identifier_start_chars)
+                         .followed_by.zero_or_more(identifier_chars)
+                         .as_string(),
+                         r"[a-zA-Z_]+[a-zA-Z0-9_]*")
 
 
 class NotTests(unittest.TestCase):
@@ -54,6 +68,8 @@ class RepeatTests(unittest.TestCase):
         self.assertEqual(RE().non_greedy.zero_or_more.digits.as_string(), "\d*?")
         self.assertEqual(RE().any_number_of.digits.as_string(), "\d*")
         self.assertEqual(RE().one.digit.as_string(), "\d{1,1}")
+        self.assertEqual(RE().one.of.any_character.as_string(), ".{1,1}")
+        self.assertEqual(RE().one.of_an.alpha.as_string(), "[a-zA-Z]{1,1}")
         self.assertEqual(RE().non_greedy.one.digit.as_string(), "\d{1,1}")  # not affected by greediness
         self.assertEqual(RE().at_least_one().digit().as_string(), "\d+")
         self.assertEqual(RE().non_greedy.at_least_one.digit.as_string(), "\d+?")

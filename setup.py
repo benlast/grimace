@@ -8,6 +8,7 @@ setup(name='grimace',
       description='A fluent regular expression generator',
       author='Ben Last',
       author_email='ben@benlast.com',
-      url='',
+      url='https://github.com/benlast/grimace/wiki',
+      license='MIT, Academic Free License version 2.1',
       packages=['grimace'],
 )
