@@ -2,22 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dac5f622-863c-45d9-9d5e-8730078ab4fb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grimace/elements.py" afterPath="$PROJECT_DIR$/grimace/elements.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/_version.py" afterPath="$PROJECT_DIR$/_version.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grimace/tests.py" afterPath="$PROJECT_DIR$/grimace/tests.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="grimace.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373941338086" ignored="false" />
+    <file path="/Dummy.txt" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373945384026" ignored="false" />
     <file path="/fluent.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373499592091" ignored="false" />
-    <file path="/Python Console" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373943741014" ignored="false" />
-    <file path="/tests.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373944163366" ignored="false" />
+    <file path="/Python Console" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373946168248" ignored="false" />
+    <file path="/tests.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373947445776" ignored="false" />
     <file path="/__init__.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373940480663" ignored="false" />
     <file path="/LICENCE" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373932470661" ignored="false" />
     <file path="/setup.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373941404809" ignored="false" />
     <file path="/extender.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373940397684" ignored="false" />
     <file path="/elements.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373944307795" ignored="false" />
+    <file path="/_version.py" changelist="dac5f622-863c-45d9-9d5e-8730078ab4fb" time="1373945372952" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,10 +46,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="elements.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="elements.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grimace/elements.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="109" column="40" selection-start="3510" selection-end="3510" vertical-scroll-proportion="0.8">
+            <state line="381" column="37" selection-start="15650" selection-end="15650" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -58,7 +58,7 @@
       <file leaf-file-name="_version.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/_version.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="0" selection-start="18" selection-end="59" vertical-scroll-proportion="0.0">
+            <state line="15" column="14" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -87,10 +87,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tests.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="tests.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/grimace/tests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="45" selection-start="1655" selection-end="1655" vertical-scroll-proportion="0.0">
+            <state line="89" column="44" selection-start="3940" selection-end="3940" vertical-scroll-proportion="0.6933333">
               <folding>
                 <element signature="e#43#58#0" expanded="true" />
               </folding>
@@ -124,6 +124,7 @@
         <option value="$PROJECT_DIR$/__init__.py" />
         <option value="$PROJECT_DIR$/grimace/__init__.py" />
         <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/_version.py" />
         <option value="$PROJECT_DIR$/grimace/elements.py" />
         <option value="$PROJECT_DIR$/grimace/tests.py" />
       </list>
@@ -269,6 +270,25 @@
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
+    <configuration default="false" name="_version" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="grimace" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/_version.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -329,14 +349,16 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <list size="2">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Python.fluent" />
       <item index="1" class="java.lang.String" itemvalue="Python tests.grimace unit tests" />
+      <item index="2" class="java.lang.String" itemvalue="Python._version" />
     </list>
     <recent_temporary>
-      <list size="2">
+      <list size="3">
         <item index="0" class="java.lang.String" itemvalue="Python tests.grimace unit tests" />
-        <item index="1" class="java.lang.String" itemvalue="Python.fluent" />
+        <item index="1" class="java.lang.String" itemvalue="Python._version" />
+        <item index="2" class="java.lang.String" itemvalue="Python.fluent" />
       </list>
     </recent_temporary>
   </component>
@@ -388,13 +410,22 @@
       <created>1373941038393</created>
       <updated>1373941038393</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Extended syntax using of() and args to a call on an RE instance, also provided regex() to allow inclusion of character sets.">
+      <created>1373945324215</created>
+      <updated>1373945324215</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Updated version">
+      <created>1373945388402</created>
+      <updated>1373945388402</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="53" width="1366" height="715" extended-state="6" />
     <editor active="false" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -410,7 +441,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32943144" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -458,7 +488,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Revised structure for packaging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated version" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -478,6 +508,8 @@
     <MESSAGE value="Added greediness control for repeat matching elements" />
     <MESSAGE value="Added LICENSE" />
     <MESSAGE value="Revised structure for packaging" />
+    <MESSAGE value="Extended syntax using of() and args to a call on an RE instance, also provided regex() to allow inclusion of character sets." />
+    <MESSAGE value="Updated version" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -567,13 +599,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/_version.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="18" selection-end="59" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/grimace/LICENSE">
       <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
         <state />
@@ -593,19 +618,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grimace/tests.py">
+    <entry file="file://$PROJECT_DIR$/_version.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="45" selection-start="1655" selection-end="1655" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#43#58#0" expanded="true" />
-          </folding>
+        <state line="15" column="14" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/grimace/elements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="109" column="40" selection-start="3510" selection-end="3510" vertical-scroll-proportion="0.8">
+        <state line="381" column="37" selection-start="15650" selection-end="15650" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grimace/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="44" selection-start="3940" selection-end="3940" vertical-scroll-proportion="0.6933333">
+          <folding>
+            <element signature="e#43#58#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

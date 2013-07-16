@@ -81,9 +81,13 @@ class RepeatTests(unittest.TestCase):
 class GroupTests(unittest.TestCase):
     def runTest(self):
         self.assertEqual(RE().start()
-                         .group().any_number_of().alphanumeric().end_group()
+                         .group.at_least_one.alphanumeric.end_group.then.optional.whitespace
                          .as_string(),
-                         r"^(\w*)")
+                         r"^(\w+)\s?")
+        self.assertEqual(RE().start()
+                         .named_group("id").at_least_one.alphanumeric.end_group.then.optional.whitespace
+                         .as_string(),
+                         r"^(?P<id>\w+)\s?")
         self.assertEqual(RE()
                          .group.start_group().zero_or_more.alphanumerics.end_group.end_group()
                          .as_string(),
