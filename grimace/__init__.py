@@ -11,4 +11,4 @@ __author__ = 'ben last <ben@benlast.com>'
 # TODO - combining REs
 
 from grimace.extender import Extender
-from grimace.elements import *
+from grimace.elements import RE, FormatError
