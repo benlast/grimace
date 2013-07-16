@@ -1,0 +1,125 @@
+__author__ = 'ben last <ben@benlast.com>'
+
+import unittest
+from grimace import RE, FormatError
+import re
+
+class BaseTests(unittest.TestCase):
+    def runTest(self):
+        # Verify that the result of calling an RE is a reference to that RE
+        r = RE()
+        self.assertEqual(r, r())
+
+
+class SimpleTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().literal(u"hello").as_string(), u"hello")
+        self.assertEqual(RE().start.end().as_string(), "^$")
+        self.assertEqual(RE().start().literal("hello").end.as_string(), "^hello$")
+        self.assertEqual(RE()
+                         .alphanumeric().word_boundary().digit()
+                         .as_string(),
+                         r"\w\b\d")
+
+        self.assertEqual(RE().any_of("abcdef").as_string(), r"[abcdef]")
+
+        # Verify that all metacharacters are quoted
+        self.assertEqual(RE().any_of(RE.metacharacters).as_string(),
+                         "[%s]" % (RE.backslash + RE.backslash.join(RE.metacharacters)))
+
+        r = RE().start.end.as_re()
+        self.assertTrue(hasattr(r, "match") and hasattr(r, "search"))
+
+        self.assertEqual(RE().dot.as_string(), r"\.")
+        r1 = RE().dot
+        r2 = RE().dot
+        self.assertNotEqual(r1, r2)
+
+
+class NotTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().digit.not_a.digit.as_string(), r"\d\D")
+        self.assertEqual(RE().word_boundary.not_a.word_boundary.as_string(),
+                         r"\b\B")
+        self.assertEqual(RE().not_an.alphanumeric.then.digit.followed_by.alphanumeric.as_string(),
+                         r"\W\d\w")
+
+
+class RepeatTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().zero_or_once().digit().as_string(), "\d?")
+        self.assertEqual(RE().non_greedy.zero_or_one.digit.as_string(), "\d??")
+        self.assertEqual(RE().zero_or_one.digit.as_string(), "\d?")
+        self.assertEqual(RE().zero_or_more().digits().as_string(), "\d*")
+        self.assertEqual(RE().non_greedy.zero_or_more.digits.as_string(), "\d*?")
+        self.assertEqual(RE().any_number_of.digits.as_string(), "\d*")
+        self.assertEqual(RE().one.digit.as_string(), "\d{1,1}")
+        self.assertEqual(RE().non_greedy.one.digit.as_string(), "\d{1,1}")  # not affected by greediness
+        self.assertEqual(RE().at_least_one().digit().as_string(), "\d+")
+        self.assertEqual(RE().non_greedy.at_least_one.digit.as_string(), "\d+?")
+        self.assertEqual(RE().between(2, 5).digit().as_string(), "\d{2,5}")
+        self.assertEqual(RE().non_greedy.between(25, 20).digit().as_string(), "\d{20,25}")
+        self.assertEqual(RE().between(5, 2).digit().as_string(), "\d{2,5}")
+
+
+class GroupTests(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE().start()
+                         .group().any_number_of().alphanumeric().end_group()
+                         .as_string(),
+                         r"^(\w*)")
+        self.assertEqual(RE()
+                         .group.start_group().zero_or_more.alphanumerics.end_group.end_group()
+                         .as_string(),
+                         r"((\w*))")
+        self.assertEqual(RE().start()
+                         .named_group(name="abcd").any_number_of().alphanumeric().end_group()
+                         .as_string(),
+                         r"^(?P<abcd>\w*)")
+
+
+class FormatErrorTests(unittest.TestCase):
+    def runTest(self):
+        self.assertRaises(FormatError, RE().end_group().start_group().at_least_one().digit().end_group().as_string)
+        self.assertRaises(FormatError, RE().start_group().at_least_one().digit().end_group().end_group().as_string)
+
+
+class Examples(unittest.TestCase):
+    def runTest(self):
+        self.assertEqual(RE()
+                         .any_number_of().digits().literal('.').at_least_one().digit()
+                         .as_string(),
+                         r"\d*\.\d+")
+
+        self.assertEqual(RE()
+                         .any_number_of.digits.followed_by.dot.then.at_least_one.digit()
+                         .as_string(),
+                         r"\d*\.\d+")
+
+        self.assertEqual(RE()
+                         .any_number_of.digits.followed_by.a.dot.then.at_least_one.digit()
+                         .as_string(),
+                         r"\d*\.{1,1}\d+")
+
+        self.assertEqual(RE()
+                         .any_number_of.digits.followed_by.an_optional.dot.then.at_least_one.digit
+                         .as_string(),
+                         r"\d*\.?\d+")
+
+        self.assertEqual(RE()
+                         .up_to(8).alphanumerics().dot().named_group(name="ext").up_to(3).alphanumerics().end_group()
+                         .as_string(),
+                         r"\w{0,8}\.(?P<ext>\w{0,3})")
+
+        #Match a US/Canadian phone number
+        north_american_number_re = (RE().start
+                                    .literal('(').followed_by.exactly(3).digits().then.literal(')')
+                                    .then.one().literal("-").then.exactly(3).digits()
+                                    .then.one().dash().followed_by.exactly(4).digits().then.end
+                                    .as_string())
+
+        number_re = re.compile(north_american_number_re)
+        match = number_re.match("(123)-456-7890")
+        self.assertIsNotNone(match)
+
+
