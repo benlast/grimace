@@ -1,5 +1,7 @@
-__author__ = 'ben last <ben@benlast.com>'
+# -*- coding: utf-8 -*-
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import unittest
 from grimace import RE, FormatError
 import re
@@ -14,10 +16,10 @@ class BaseTests(unittest.TestCase):
 
 class SimpleTests(unittest.TestCase):
     def runTest(self):
-        self.assertEqual(RE().literal(u"hello").as_string(), u"hello")
+        self.assertEqual(RE().literal("hello").as_string(), "hello")
         self.assertEqual(RE().start.end().as_string(), "^$")
         self.assertEqual(str(RE().start.end()), "^$")
-        self.assertEqual(unicode(RE().start.end()), u"^$")
+        self.assertEqual(unicode(RE().start.end()), "^$")
         self.assertEqual(RE().start().literal("hello").end.as_string(), "^hello$")
         self.assertEqual(RE()
                          .alphanumeric().word_boundary().digit()
@@ -152,5 +154,3 @@ class Examples(unittest.TestCase):
         number_re = re.compile(north_american_number_re)
         match = number_re.match("(123)-456-7890")
         self.assertIsNotNone(match)
-
-

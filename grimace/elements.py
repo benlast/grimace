@@ -1,8 +1,11 @@
-__author__ = 'ben last <ben@benlast.com>'
+# -*- coding: utf-8 -*-
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import types
 import re
-from extender import Extender
+from .extender import Extender
+from functools import reduce  # which is no longer a builtin in Python 3.
 
 
 class REElement(object):
