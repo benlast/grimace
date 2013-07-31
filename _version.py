@@ -1,7 +1,7 @@
-#!/bin/env python
+#!/usr/bin/env python
 # To update the _version.py file with a new version, just execute this file.
 __author__ = 'ben last <ben@benlast.com>'
-__version_info_tuple__ = (0, 0, 10)
+__version_info_tuple__ = (0, 0, 11)
 __version_info__ = tuple([str(x) for x in __version_info_tuple__])
 __version__ = '.'.join(__version_info__)
 
