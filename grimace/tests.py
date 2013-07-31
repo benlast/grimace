@@ -2,9 +2,10 @@
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-import unittest
-from grimace import RE, FormatError
 import re
+import unittest
+from nine import str
+from grimace import RE, FormatError
 
 
 class BaseTests(unittest.TestCase):
@@ -19,7 +20,7 @@ class SimpleTests(unittest.TestCase):
         self.assertEqual(RE().literal("hello").as_string(), "hello")
         self.assertEqual(RE().start.end().as_string(), "^$")
         self.assertEqual(str(RE().start.end()), "^$")
-        self.assertEqual(unicode(RE().start.end()), "^$")
+        self.assertEqual(str(RE().start.end()), "^$")
         self.assertEqual(RE().start().literal("hello").end.as_string(), "^hello$")
         self.assertEqual(RE()
                          .alphanumeric().word_boundary().digit()
@@ -144,7 +145,7 @@ class Examples(unittest.TestCase):
                          .as_string(),
                          r"\w{0,8}\.(?P<ext>\w{0,3})")
 
-        #Match a US/Canadian phone number
+        # Match a US/Canadian phone number
         north_american_number_re = (RE().start
                                     .literal('(').followed_by.exactly(3).digits().then.literal(')')
                                     .then.one().literal("-").then.exactly(3).digits()
