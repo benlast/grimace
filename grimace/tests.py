@@ -119,7 +119,11 @@ class FormatErrorTests(unittest.TestCase):
 
 
 class Examples(unittest.TestCase):
-    def runTest(self):
+    def test_any_of(self):
+        r = RE().any_of('0123456789-.()abcdefghijklmnopqrstuvwxyz')
+        re.compile(str(r))  # should not raise
+
+    def test_examples(self):
         self.assertEqual(RE()
                          .any_number_of().digits().literal('.').at_least_one().digit()
                          .as_string(),
