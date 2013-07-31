@@ -56,11 +56,11 @@ class SimpleTests(unittest.TestCase):
 
         nlr = RE().newline
         self.assertEqual(str(nlr), r'\\n')
-        self.assertIsNotNone(nlr.as_re().match(r"\n"))
+        assert nlr.as_re().match(r"\n")
 
         tlr = RE().tab
         self.assertEqual(str(tlr), r'\\t')
-        self.assertIsNotNone(tlr.as_re().match(r"\t"))
+        assert tlr.as_re().match(r"\t")
 
 
 class NotTests(unittest.TestCase):
@@ -153,4 +153,4 @@ class Examples(unittest.TestCase):
 
         number_re = re.compile(north_american_number_re)
         match = number_re.match("(123)-456-7890")
-        self.assertIsNotNone(match)
+        assert match
