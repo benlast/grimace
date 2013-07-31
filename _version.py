@@ -24,10 +24,9 @@ def generate_next_version():
     lines = ["__version_info_tuple__ = (%d, %d, %d)\n" % (aa, bb, cc) if x.startswith("__version_info_tuple__") else x
              for x in open(__file__, 'r')]
     # Rewrite the file
-    print "Generated version (%d, %d, %d)" % (aa, bb, cc)
+    print("Generated version (%d, %d, %d)" % (aa, bb, cc))
     open(__file__, 'w').write("".join(lines))
 
 
 if __name__ == "__main__":
     generate_next_version()
-

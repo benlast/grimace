@@ -1,8 +1,11 @@
-__author__ = 'ben last <ben@benlast.com>'
+# -*- coding: utf-8 -*-
 
-import unittest
-from grimace import RE, FormatError
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import re
+import unittest
+from nine import str
+from grimace import RE, FormatError
 
 
 class BaseTests(unittest.TestCase):
@@ -14,10 +17,10 @@ class BaseTests(unittest.TestCase):
 
 class SimpleTests(unittest.TestCase):
     def runTest(self):
-        self.assertEqual(RE().literal(u"hello").as_string(), u"hello")
+        self.assertEqual(RE().literal("hello").as_string(), "hello")
         self.assertEqual(RE().start.end().as_string(), "^$")
         self.assertEqual(str(RE().start.end()), "^$")
-        self.assertEqual(unicode(RE().start.end()), u"^$")
+        self.assertEqual(str(RE().start.end()), "^$")
         self.assertEqual(RE().start().literal("hello").end.as_string(), "^hello$")
         self.assertEqual(RE()
                          .alphanumeric().word_boundary().digit()
@@ -54,11 +57,11 @@ class SimpleTests(unittest.TestCase):
 
         nlr = RE().newline
         self.assertEqual(str(nlr), r'\\n')
-        self.assertIsNotNone(nlr.as_re().match(r"\n"))
+        assert nlr.as_re().match(r"\n")
 
         tlr = RE().tab
         self.assertEqual(str(tlr), r'\\t')
-        self.assertIsNotNone(tlr.as_re().match(r"\t"))
+        assert tlr.as_re().match(r"\t")
 
 
 class NotTests(unittest.TestCase):
@@ -116,7 +119,11 @@ class FormatErrorTests(unittest.TestCase):
 
 
 class Examples(unittest.TestCase):
-    def runTest(self):
+    def test_any_of(self):
+        r = RE().any_of('0123456789-.()abcdefghijklmnopqrstuvwxyz')
+        re.compile(str(r))  # should not raise
+
+    def test_examples(self):
         self.assertEqual(RE()
                          .any_number_of().digits().literal('.').at_least_one().digit()
                          .as_string(),
@@ -142,7 +149,7 @@ class Examples(unittest.TestCase):
                          .as_string(),
                          r"\w{0,8}\.(?P<ext>\w{0,3})")
 
-        #Match a US/Canadian phone number
+        # Match a US/Canadian phone number
         north_american_number_re = (RE().start
                                     .literal('(').followed_by.exactly(3).digits().then.literal(')')
                                     .then.one().literal("-").then.exactly(3).digits()
@@ -151,6 +158,4 @@ class Examples(unittest.TestCase):
 
         number_re = re.compile(north_american_number_re)
         match = number_re.match("(123)-456-7890")
-        self.assertIsNotNone(match)
-
-
+        assert match

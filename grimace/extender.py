@@ -1,4 +1,7 @@
-__author__ = 'ben last <ben@benlast.com>'
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 
 class Extender(object):
@@ -22,5 +25,3 @@ class Extender(object):
             return klass(instance, element)
         else:
             return klass(instance)
-
-
