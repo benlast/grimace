@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
+
 """
 grimace - a fluent regular expression package for Python.
 (c) 2013 ben last <ben@benlast.com>
 See the LICENSE file for licence terms (MIT, AFL)
 """
 
-__author__ = 'ben last <ben@benlast.com>'
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 # TODO - lookahead assertions - suggest .lookahead_match, .lookahead_end, and allow inversion via not_a
 # TODO - MULTILINE mode?
 # TODO - combining REs
 
-from grimace.extender import Extender
-from grimace.elements import RE, FormatError
+from .extender import Extender
+from .elements import RE, FormatError
