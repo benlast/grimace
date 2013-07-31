@@ -264,7 +264,7 @@ class RE(object):
 
     # Character classes
     backslash = "\\"
-    metacharacters = r".^$*+?{}[]\|()"
+    metacharacters = r".^$*+?{}[]\|()-"
 
     @staticmethod
     def escape(c):
