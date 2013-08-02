@@ -8,4 +8,4 @@ Python3 support (ands bugfixes) by Nando Florestan
 * `Project home`_
 
 .. _Documentation: https://github.com/benlast/grimace/wiki
-.. _`Project home`_: https://github.com/benlast/grimace
+.. _`Project home`: https://github.com/benlast/grimace
