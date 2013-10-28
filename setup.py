@@ -20,7 +20,7 @@ def content_of(paths, encoding='utf-8', sep='\n'):
 here = path.abspath(path.dirname(__file__))
 
 setup(name='grimace',
-      version='0.0.13dev',
+      version='0.0.14',
       description='A fluent regular expression generator',
       long_description=content_of(path.join(here, 'README.rst')),
       author='Ben Last',
