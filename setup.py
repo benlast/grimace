@@ -5,7 +5,6 @@ from __future__ import (absolute_import, division, print_function)
 import codecs
 from os import path
 from setuptools import setup, find_packages
-from _version import __version__
 
 
 def content_of(paths, encoding='utf-8', sep='\n'):
@@ -21,7 +20,7 @@ def content_of(paths, encoding='utf-8', sep='\n'):
 here = path.abspath(path.dirname(__file__))
 
 setup(name='grimace',
-      version=__version__,
+      version='0.0.13dev',
       description='A fluent regular expression generator',
       long_description=content_of(path.join(here, 'README.rst')),
       author='Ben Last',
@@ -51,4 +50,4 @@ setup(name='grimace',
       include_package_data=True,
       zip_safe=False,
       test_suite='grimace.tests',
-)
+      )
