@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+dist/
+grimace.egg-info/
+idea/
+.mr.developer.cfg
+.project
+.pydevproject
