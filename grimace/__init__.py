@@ -2,7 +2,7 @@
 
 """
 grimace - a fluent regular expression package for Python.
-(c) 2013 ben last <ben@benlast.com>
+(c) 2017 ben last <ben@benlast.com>
 See the LICENSE file for licence terms (MIT, AFL)
 """
 

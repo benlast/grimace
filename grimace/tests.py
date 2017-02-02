@@ -110,6 +110,10 @@ class GroupTests(unittest.TestCase):
                          .named_group(name="abcd").any_number_of().alphanumeric().end_group()
                          .as_string(),
                          r"^(?P<abcd>\w*)")
+        self.assertEqual(RE().start()
+                         .start_named_group(name="abcd").any_number_of().alphanumeric().end_group()
+                         .as_string(),
+                         r"^(?P<abcd>\w*)")
 
 
 class FormatErrorTests(unittest.TestCase):
