@@ -37,7 +37,7 @@ setup(
     url='https://github.com/benlast/grimace',
     license='MIT, Academic Free License version 2.1',
     classifiers=[  # http://pypi.python.org/pypi?:action=list_classifiers
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'License :: OSI Approved :: Academic Free License (AFL)',
