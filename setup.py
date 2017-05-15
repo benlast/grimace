@@ -21,7 +21,7 @@ def content_of(paths, encoding='utf-8', sep='\n'):
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 if '--grimace-version' in sys.argv:
     sys.stdout.write(VERSION)
